@@ -31,6 +31,7 @@
 
           if (data['message'] == "timedout") {
             window.location.replace("/dashboard");
+            return;
           }
 
           messages.append(data['message']);

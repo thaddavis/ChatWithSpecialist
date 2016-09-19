@@ -18,8 +18,6 @@ class ChatsChannel < ApplicationCable::Channel
       return
     end
 
-
-
     current_user.messages.create!(body: data['message'], chat_id: data['chat_id'])
 
   end

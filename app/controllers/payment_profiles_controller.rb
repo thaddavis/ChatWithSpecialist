@@ -4,6 +4,10 @@ class PaymentProfilesController < ApplicationController
   before_action :set_payment_profile, only: [:show, :edit, :switch_plan, :add_card, :remove_card, :set_default_card]
 
   def show
+
+    @charges = []
+    @invoices = []
+
     authorize @payment_profile
 
     customer = FetchStripeCustomer.call(@payment_profile.user)
@@ -12,7 +16,6 @@ class PaymentProfilesController < ApplicationController
       return
     end
 
-    @charges = []
     Charge.where(:user_id => current_user.id).each do |c|
       stripe_charge = FetchStripeCharge.call(@payment_profile.user, c.charge_stripe_id)
       if @payment_profile.user.payment_profile.errors.any?
@@ -21,8 +24,6 @@ class PaymentProfilesController < ApplicationController
       end
       @charges << stripe_charge
     end
-
-    @invoices = []
 
     Invoice.where(:user_id => current_user.id).each do |c|
       stripe_invoice = FetchStripeInvoice.call(@payment_profile.user, c.invoice_stripe_id)
@@ -34,6 +35,8 @@ class PaymentProfilesController < ApplicationController
     end
 
     @invoices = @invoices.compact
+
+
   end
 
   def edit
